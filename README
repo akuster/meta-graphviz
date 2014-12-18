@@ -1,0 +1,28 @@
+This README file contains information on the contents of the
+graphviz layer.
+
+Please see the corresponding sections below for details.
+
+
+Dependencies
+============
+
+This layer depends on:
+
+  URI: git://git.openembedded.org/openembedded-core
+  layers: meta
+  branch: master
+
+  URI: git://git.yoctoproject.org/xxxx
+  layers: xxxx
+  branch: master
+
+
+Patches
+=======
+
+Please submit any patches against the globus layer to the
+Yocto mailing list (yocto@yoctoproject.org) and cc: the maintainer:
+
+Maintainer: Armin Kuster <akuster808@gmail.com>
+
