@@ -5,7 +5,7 @@ SECTION = "graphics"
 LICENSE = "EPL-1.0"
 LIC_FILES_CHKSUM = "file://COPYING;beginline=1;endline=2;md5=737cf7b11c0759e6d3b0d6cb08b7c4f8"
 
-DEPENDS = "graphviz-native bison flex libtool zlib"
+DEPENDS += "graphviz-native bison flex libtool zlib"
 DEPENDS_class-native = ""
 
 SRC_URI_BASE = "${DEBIAN_MIRROR}/main/g/${BPN}/${BPN}_${PV}.orig.tar.gz;name=archive \
@@ -26,8 +26,11 @@ inherit autotools-brokensep pkgconfig
 
 LDFLAGS += "-Wunused-but-set-variable -Wmaybe-uninitialized -Wunused-variable"
 
-PACKAGECONFIG ??= "ghostscript cairo swig tcl gtk glut lua"
+PACKAGECONFIG ??= "ghostscript rsvg cairo swig tcl gtk glut lua sfdp png gd"
+PACKAGECONFIG_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'X11', '', d)}"
 PACKAGECONFIG_class-native ??= ""
+
+PACKAGECONFIG[sfdp] = "--enable-sfdp=yes, --disable-sfdp, ,"
 PACKAGECONFIG[swig] = "--enable-swig=yes, --disable-swig, swig,"
 PACKAGECONFIG[lua] = "--enable-lua=yes, --disable-lua, lua,"
 PACKAGECONFIG[cairo] = "--with-pangocairo=yes, --with-pangocairo=no, cairo,"
@@ -42,15 +45,17 @@ PACKAGECONFIG[poppler] = "--with-poppler=yes, --with-poppler=no, poppler,"
 PACKAGECONFIG[guile] = "--with-guile=yes, --with-guile=no, guile,"
 PACKAGECONFIG[php] = "--with-php=yes, --with-php=no, php,"
 PACKAGECONFIG[perl] = "--with-perl=yes, --with-perl=no, perl,"
-PACKAGECONFIG[python] = "--with-python=yes, --with-python=no, ,"
-PACKAGECONFIG[ruby] = "--with-ruby=yes, --with-ruby=no, ,"
+PACKAGECONFIG[python] = "--with-python=yes, --with-python=no, python ,"
+PACKAGECONFIG[ruby] = "--with-ruby=yes, --with-ruby=no, ruby, "
 PACKAGECONFIG[qt] = "--with-qt=yes, --with-qt=no, qte,"
 PACKAGECONFIG[glade] = "--with-glade=yes, --with-glade=no, glade3,"
 PACKAGECONFIG[libgd] = "--with-libgd=yes, --with-libgd=no, libglade,"
+PACKAGECONFIG[png] = "--with-libpng=yes, --with-libpng=no, libpng,"
+PACKAGECONFIG[rsvg] = "--with-rsvg=yes, --with-rsvg=no, librsvg, librsvg"
 PACKAGECONFIG[pixbuf] = "--with-gdk=yes --with-gdk-pixbuf=yes, --with-gdk=no --with-gdk-pixbuf=no, gdk-pixbuf,"
-PACKAGECONFIG[X11] = "--with-x, --without-x, ,"
+PACKAGECONFIG[X11] = "--with-x, --without-x, libx11 virtual/libx11 ,"
 
-#${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'virtual/libx11', '', d)}
+EXTRA_OECONF = "  --enable-ltdl"
 
 EXTRA_OECONF_class-native = " \
     --enable-sharp=no \
@@ -58,16 +63,16 @@ EXTRA_OECONF_class-native = " \
     --enable-ocaml=no \
     --enable-r=no \
     --with-devil=no \
-    --with-poppler=no \
-    --with-rsvg=no \
     --with-lasi=no \
     --with-gtkgl=no \
     --with-gtkglext=no \
     --with-gts=no \
     --with-ann=no \
-    --with-sfdp=no \
     --with-ortho=no \
-    --with-digcola=no "
+    --with-digcola=no \
+    --with-smyrna=no \
+    --with-ipsepcola=no \
+     "
 
 debian_do_patch() {
     cd ${S}
@@ -97,5 +102,8 @@ do_install_class-native () {
 }
 
 INSANE_SKIP_${PN} += "dev-so"
+
+RDEPENDS_${PN} = "libxml2 libcroco"
+RDEPENDS_class-native = ""
 
 BBCLASSEXTEND = "native"
